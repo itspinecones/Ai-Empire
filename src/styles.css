@@ -1,0 +1,66 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #081326; color: #eaf1ff; font: 14px system-ui, -apple-system, sans-serif; }
+button { font: inherit; cursor: pointer; touch-action: manipulation; background: #25599b; color: #fff; border: 1px solid #3679c4; border-radius: 10px; padding: 11px; width: 100%; font-weight: 700; min-height: 44px; white-space: normal; overflow-wrap: anywhere; }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible { outline: 3px solid #84d2ff; outline-offset: 3px; }
+main { max-width: 1100px; margin: auto; min-height: 100svh; position: relative; padding: max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); background: radial-gradient(ellipse at 50% 40%, #172540, #091529 70%); }
+h1 { margin: 0; font-size: 20px; }
+.preview-banner { display: flex; flex-wrap: wrap; gap: 3px 12px; justify-content: space-between; margin-bottom: 10px; color: #9eb8dd; font-size: 11px; }
+.preview-banner b { color: #b9c9ff; font-weight: 600; }
+.panel { background: #0c1a30e8; border: 1px solid #28436a; border-radius: 15px; padding: 12px; min-width: 0; }
+.panel h2 { font-size: 15px; margin: 0 0 9px; }
+.label { color: #9bb5db; font-size: 11px; overflow-wrap: anywhere; }
+.num { font-weight: 750; font-size: 18px; overflow-wrap: anywhere; }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; margin-top: 8px; }
+.grid .panel { padding: 8px 4px; text-align: center; }
+.grid .num { font-size: 13px; }
+.row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 8px; font-size: 12px; color: #adc1e0; }
+.note { color: #9aafd0; font-size: 11px; line-height: 1.5; }
+button.secondary { background: #13294b; }
+#world { width: 100%; height: auto; display: block; border-radius: 12px; aspect-ratio: 640 / 390; background: #0b1528; }
+.scene { position: relative; margin: 10px 0; }
+.scene .panel { padding: 0; border: 0; background: transparent; }
+.scene h2, .scene #worldhint { display: none; }
+.scene-error { padding: 12px; color: #ffcd99; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.identity, .status { border: 1px solid #254267; background: #08172ee8; border-radius: 13px; padding: 10px 12px; min-width: 0; overflow-wrap: anywhere; }
+.identity { flex: 1 1 auto; }
+.identity small { display: block; color: #91b2dc; }
+.status { flex: 0 1 auto; font-size: 12px; text-align: right; }
+.status b { font-size: 19px; }
+.game { display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 8px; margin-top: 8px; }
+.nav { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.nav button { font-size: 10px; padding: 10px 2px; min-height: 55px; background: #0b1c36; border: 1px solid transparent; }
+.nav button.active { border-color: #2e94ff; color: #5cc4ff; }
+.nav .glyph { display: block; font-size: 22px; }
+.mainarea { min-width: 0; }
+.panel:has(#job) { margin-top: 8px; }
+.panel:has(#job) h2 { display: none; }
+#job { background: #5d42e8; border-color: #8069ff; }
+.panel:has(#buyGpu) { margin-top: 10px; }
+.panel:has(#buyGpu) button { margin: 4px 0; }
+#reset { max-width: 220px; background: #182b46; font-size: 12px; padding: 9px; }
+#toast { color: #a1ebbb; font-size: 12px; line-height: 1.5; }
+[hidden] { display: none !important; }
+@media (min-width: 700px) {
+  main { padding: 15px 24px 30px; }
+  .game { grid-template-columns: 90px minmax(0, 1fr); }
+  .nav button { min-height: 72px; }
+  .scene { margin: 0; }
+  .panel:has(#job) { max-width: 730px; margin: 8px auto 0; position: relative; }
+  .grid { max-width: 800px; margin: 12px auto; }
+}
+@media (max-width: 420px) {
+  .top { gap: 5px; align-items: stretch; }
+  .identity, .status { padding: 8px; }
+  .identity h1 { font-size: 18px; }
+  .identity small { font-size: 10px; }
+  .status { font-size: 11px; max-width: 45%; }
+  .status b { font-size: 16px; }
+  .game { grid-template-columns: 60px minmax(0, 1fr); gap: 5px; }
+  .nav button { min-height: 48px; }
+  .nav .glyph { font-size: 19px; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid .num { font-size: 13px; }
+  .panel { padding: 10px; }
+}

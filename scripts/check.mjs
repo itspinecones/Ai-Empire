@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+const html = await readFile('index.html', 'utf8');
+assert.equal((html.match(/<\/html>/g) || []).length, 1, 'Exactly one HTML document');
+assert.match(html, /<\/html>\s*$/, 'Nothing after the closing HTML tag');
+assert.doesNotMatch(html, /<button\b[^>]*>\s*<\/button>/, 'No empty buttons');
+assert.match(html, /src="\.\/src\/app.js"/);
+const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
+assert.equal(ids.length, new Set(ids).size, 'IDs must be unique');
+for (const file of ['src/game.js', 'src/app.js', 'src/room.js']) execFileSync(process.execPath, ['--check', file]);
+const app = await readFile('src/app.js', 'utf8');
+for (const [, id] of app.matchAll(/el\('([^']+)'\)/g)) assert.ok(ids.includes(id), `Missing UI element ${id}`);
+console.log('HTML structure, button labels, UI references and JavaScript syntax passed.');
