@@ -1,3 +1,17 @@
+# Articulated voxel character — October 28, 2026
+
+Approved direction: the 3D pixel/voxel style and a character 25% larger than the half-size concept. Implemented a single cuboid model with a shared canvas and body scale for all activities. Separate illustrated pose images no longer load. Hair uses a rounded volume of small shaded cubes; hoodie, skin and shoes use block geometry. The model is intentionally simpler than the detailed concept image.
+
+The walk uses alternating stance/swing phases tied to travel distance, with bent legs and opposing arm motion. Heading follows the current route with smooth turning. Stationary typing moves hands, cat time crouches and moves hands, and the window pose stands. The cat and chair remain separate illustrations. Posture transitions remain immediate; routes are authored and furniture depth/collision are approximate.
+
+Rendering uses one 128×160 canvas with pixel scaling, at most 30 paints/s in travel and 12/s in activities. Hidden tabs stop drawing. Reduced motion skips travel, freezes joints and avoids repeated static redraws. No runtime dependency or large character atlas is added. Phone battery and physical iPhone performance remain unmeasured.
+
+Game speed, random hourly activity changes, job independence and saved economy remain unchanged. Old stationary character saves snap to recalibrated destination anchors; routes retain current progress.
+
+Validation: 21 tests pass, including alternating planted foot, floor contact, common canvas bounds throughout every pose and a full turn, hourly routines and economy/job persistence. Structure and syntax checks pass. Browser inspected desk, cat and window poses; 390×844 and 844×390 frames have no horizontal overflow, and actor canvas width is the same (~85.8px) in both orientations. Public main and Pages remain unchanged.
+
+---
+
 # Hourly room routine — October 28, 2026
 
 The existing clock controls the routine: one game hour per real minute. At each hour boundary choose uniformly from the other two activities (typing, cat, window). Walking connects destinations and can be interrupted by the next boundary. No separate activity countdown. Sleep remains deferred. Business rules and job timers are unchanged.

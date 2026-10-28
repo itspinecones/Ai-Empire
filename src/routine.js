@@ -2,10 +2,12 @@ export const ROOM_SAVE_KEY = 'ai-empire-room-hourly-v2';
 export const ACTIVITIES = Object.freeze(['typing','cat','window']);
 // Logical floor coordinates map into both approved room illustrations.
 export const FLOOR = {
- typing:[61.5,60], junction:[55.5,60], cat:[60,70], window:[48,49],
+ typing:[62.2,58.6], junction:[55.5,60], cat:[60,70], window:[48,49],
 };
 export function project(point, tall = false) {
- return tall ? [point[0]*1.25-16.5,point[1]*.64+17.2] : [...point];
+ if(!tall)return [...point];
+ const y=point[1]<=58.6?48.56+(point[1]-49)*4.14/9.6:52.7+(point[1]-58.6)*9.3/11.4;
+ return [point[0]*1.25-16.5,y];
 }
 export function createRoomRoutine(minutes=360) {
  return {version:2,hour:Math.floor(minutes/60),activity:'typing',position:[...FLOOR.typing],route:[],stride:0};
@@ -16,7 +18,7 @@ export function readRoomRoutine(raw, minutes) {
   const s=JSON.parse(raw);
   const validPoint=p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)&&p[0]>=40&&p[0]<=70&&p[1]>=45&&p[1]<=75;
   if(s?.version===2&&ACTIVITIES.includes(s.activity)&&Number.isInteger(s.hour)&&s.hour>=0&&validPoint(s.position)&&Array.isArray(s.route)&&s.route.length<=3&&s.route.every(validPoint))
-   return {...s,stride:Number.isFinite(s.stride)?s.stride:0};
+   return {...s,position:s.route.length?s.position:[...FLOOR[s.activity]],stride:Number.isFinite(s.stride)?s.stride:0};
  } catch {}
  return initial;
 }
@@ -40,6 +42,7 @@ export function advanceTravel(s, seconds, reducedMotion=false) {
   if(length<.0001){s.route.shift();continue;}
   const step=Math.min(distance,length);
   s.facing=dx<0?-1:1;s.row=dy<0?1:0;
+  s.heading=Math.atan2(dx/1.5+dy/.62,-dx/1.5+dy/.62);
   s.position=[s.position[0]+dx/length*step,s.position[1]+dy/length*step];
   s.stride+=step;distance-=step;
   if(step===length)s.route.shift();
