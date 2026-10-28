@@ -1,3 +1,17 @@
+# One-minute room activities — October 28, 2026
+
+Approved scope: typing → walking → cat time, 60 seconds each, repeating independently of AI jobs. Sleeping is excluded until the clock/day-night system is developed. The existing display clock remains unchanged; it does not control these real-time activity slots.
+
+Implementation: independent requestAnimationFrame controller paints at most 30 times per second. Transparent four-frame walk poses (front/back, mirrored for direction) and a four-frame petting atlas render over the approved room. A separate empty-chair image stays at the desk when the seated person/chair image is hidden. The cat appears once, either standalone or in the petting pose. Routes use hand-calibrated floor waypoints in portrait and landscape; the final five seconds of cat time are used to walk back to the desk. Activity labels/countdowns distinguish the new preview from the previous typing/rest build.
+
+Routine progress is stored separately under ai-empire-room-routine-v1. Reload resumes the current activity; hidden tabs pause room time. Jobs retain their original independent offline timer and save key. Every pose is preloaded before leaving the desk, with a visible error and seated fallback on load failure. Reduced motion freezes sprite frames and travel. New WebP assets total about 755 KB, reused in both orientations. No new runtime dependencies.
+
+Limitations: layered illustrated poses, not a rigged 3D character. Sitting/crouching transitions switch poses; walking frames are approximate and still need animation polish. The typing sprite retains its original embedded chair, replaced by the separate empty chair while away. Routes are authored for this fixed room, not a general pathfinding system. Clothing, installable GPUs and behavior unlocks are future work. Physical iPhone performance remains unmeasured.
+
+Validation: 20 automated checks/tests cover exact 60-second boundaries, all three activities, cycle repetition, no sleep activity, reload recovery, route continuity in both orientations, reduced motion, and existing business rules. Browser observed a full real-time typing → walking → cat → typing cycle, a job started during walking completing for $5, and routine continuity through reload. Portrait 390×844 and landscape 844×390 have no horizontal overflow. Source remains on dev/baseline-repair; public main and GitHub Pages are not modified.
+
+---
+
 # Independent room routine — October 28, 2026
 
 User direction: room life is independent of business buttons and job state. The character should eventually walk, pet a cat, type and sleep in the bed at night. Upgrades can unlock behaviors; furniture will later offer interactions such as installing a purchased GPU and changing clothes at a wardrobe. Bedtime is intentionally undecided.

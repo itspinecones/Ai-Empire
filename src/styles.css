@@ -11,3 +11,18 @@
 @media(orientation:landscape) and (max-height:650px){.work .job-meter{grid-column:1/-1;grid-row:2;margin:0}.work #job{grid-column:2;grid-row:1}}
 @media(prefers-reduced-motion:reduce){.person,[data-room-activity="typing"] .person,[data-room-activity="typing"] .monitor-glow{animation:none!important}[data-room-activity="typing"] .monitor-glow{opacity:.07}}
 .paused .person,.paused .monitor-glow{animation-play-state:paused!important}
+
+/* Separate floor actors: the desk chair never travels with the walker. */
+.empty-chair,.room-cat,.walking-actor,.petting-actor{position:absolute;display:none;pointer-events:none;transform:translate(-50%,-93%)}
+.empty-chair{left:62%;top:58.6%;width:15.2%;height:auto;z-index:1}
+.room-cat{left:66.1%;top:70%;width:8.4%;height:auto;z-index:3;transform:translate(-50%,-90%)}
+.walking-actor{width:18%;aspect-ratio:3/4;z-index:4;transform:translate(-50%,-97.07%)}
+.walk-sprite{width:100%;height:100%;background:url('../assets/walk-atlas.webp') 0 0/400% 200% no-repeat}
+.petting-actor{left:62.8%;top:70%;width:18%;aspect-ratio:1;z-index:4;background:url('../assets/pet-atlas.webp') 0 0/200% 200% no-repeat;transform:translate(-50%,-94%)}
+.person{z-index:2}.monitor-glow{z-index:1}
+.routine-ready .room-cat{display:block}
+[data-pose="walking"] .person,[data-pose="petting"] .person{display:none}
+[data-pose="walking"] .empty-chair,[data-pose="petting"] .empty-chair,[data-pose="walking"] .walking-actor,[data-pose="petting"] .petting-actor{display:block}
+[data-pose="petting"] .room-cat{display:none}
+.status .room-status{color:#d5bb97;font-size:10px;margin-top:5px}
+@media(orientation:portrait){.empty-chair{left:61.5%;top:52.7%;width:22%}.walking-actor{width:27%}.petting-actor{left:62.2%;top:62%;width:27%}.room-cat{left:67.2%;top:62%;width:12.6%}}
