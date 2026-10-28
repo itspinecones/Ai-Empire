@@ -1,6 +1,6 @@
 # AI Empire — development baseline
 
-Mobile-first idle tycoon. This development branch now integrates the approved illustrated bedroom style with working controls. The workstation now has layered character motion and timed jobs. True 3D, walking, and independent limb animation are still pending.
+Mobile-first idle tycoon. This development branch now integrates the approved illustrated bedroom style with working controls. The room now alternates typing and seated breaks independently of timed AI jobs. The next activity roadmap is in ROOM-LIFE.md. True 3D, walking, and independent limb animation are still pending.
 
 ## Environment boundaries
 

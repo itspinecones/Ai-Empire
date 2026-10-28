@@ -1,3 +1,15 @@
+# Independent room routine — October 28, 2026
+
+User direction: room life is independent of business buttons and job state. The character should eventually walk, pet a cat, type and sleep in the bed at night. Upgrades can unlock behaviors; furniture will later offer interactions such as installing a purchased GPU and changing clothes at a wardrobe. Bedtime is intentionally undecided.
+
+Implemented now: a separate routine module alternates typing and seated breaks using the existing approved person artwork. The HTML room-activity attribute drives the character and monitor animations. Job start/completion, upgrades and resetting the economy do not change the routine. Ambient time pauses in hidden tabs; business timers retain saved offline completion. Reload starts a fresh cosmetic routine without altering the saved job. Reduced-motion settings still suppress movement. No new furniture, poses or sleep schedule have been integrated.
+
+Next visual milestone: approve the activity storyboard, then create separate standing/walking, petting and sleeping poses. The current sprite includes the chair, so the chair must become its own stationary layer before walking is implemented. See ROOM-LIFE.md for the agreed direction and implementation sequence.
+
+Validation: 18 tests passed, including independent routine transitions and long time steps; syntax/HTML checks passed. Browser verified typing without a job, a seated break while a job remained active, reload with 1.1 seconds left and one $5 payout. No horizontal desktop overflow or game console errors; only extension metadata errors. New mobile layout and physical iPhone checks were not repeated because geometry/artwork were unchanged. Public main and GitHub Pages remain unchanged.
+
+---
+
 # Workstation loop — October 28, 2026
 
 Current build: 10-second jobs, reward snapshot at start, one active job, saved timer, one-time completion payout. Existing preview saves migrate without losing balances. Progress and working animation continue correctly after reload; one started job can complete while away, but no unstarted jobs auto-run.

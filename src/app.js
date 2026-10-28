@@ -1,5 +1,20 @@
 import { SAVE_KEY, MODEL_NAMES, initialState, readState, advance, performAction,
   gpuCost, agentCost, unlockCost, jobReward, incomeRate, formatNumber as fmt, clockText } from './game.js';
+import { createRoomRoutine, advanceRoomRoutine } from './routine.js';
+
+const roomRoutine = createRoomRoutine();
+let roomTick = performance.now();
+function renderRoom() {
+  document.documentElement.dataset.roomActivity = roomRoutine.activity;
+}
+function tickRoom() {
+  const now = performance.now();
+  advanceRoomRoutine(roomRoutine, now - roomTick);
+  roomTick = now;
+  renderRoom();
+}
+renderRoom();
+document.documentElement.classList.toggle('paused', document.hidden);
 
 const el = id => document.getElementById(id);
 let storageAvailable = true, raw = null;
@@ -37,7 +52,6 @@ function render() {
   el('job').disabled = Boolean(state.job);
   el('jobProgress').value = state.job ? Math.min(10, Math.max(0, 10 - remaining / 1000)) : 0;
   el('jobStatus').textContent = state.job ? 'Training · reward $' + fmt(state.job.cash) + ' + ' + state.job.rp + ' research' : 'Ready · 10-second job';
-  document.documentElement.classList.toggle('working', Boolean(state.job));
   el('buyGpu').textContent = 'Upgrade GPU · $' + fmt(gpuCost(state));
   el('buyGpu').disabled = state.cash < gpuCost(state) || state.gpu >= 1000;
   el('buyAgent').textContent = 'Hire AI Agent · $' + fmt(agentCost(state));
@@ -51,7 +65,7 @@ for (const [id, action] of [['job', 'job'], ['buyGpu', 'gpu'], ['buyAgent', 'age
   el(id).addEventListener('click', () => {
     advance(state);
     if (performAction(state, action)) {
-      el('toast').textContent = action === 'job' ? 'Job started. Your developer is working.' : action === 'gpu'
+      el('toast').textContent = action === 'job' ? 'AI job started. Your computer is running it.' : action === 'gpu'
         ? 'GPU upgraded. Jobs and agents now earn more.' : action === 'agent'
         ? 'AI agent hired. Passive income is running.' : 'Unlocked ' + MODEL_NAMES[state.tier] + '.';
     }
@@ -85,10 +99,14 @@ persist(); render(); announceCompletion(startup);
 
 setInterval(() => {
   if (document.hidden) return;
+  tickRoom();
   const result = advance(state); render(); announceCompletion(result);
   if (Date.now() - lastSaved >= 5000) persist();
 }, 100);
 document.addEventListener('visibilitychange', () => {
+  // Freeze ambient time while hidden. Jobs continue on their own saved clock.
+  if (document.hidden) tickRoom();
+  roomTick = performance.now();
   const result = advance(state);
   document.documentElement.classList.toggle('paused', document.hidden);
   if (!document.hidden && result.earned > 0 && result.elapsed > 5)
