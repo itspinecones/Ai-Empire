@@ -6,9 +6,9 @@ The bedroom is a living space that continues its own routine while the player bu
 
 The character is smaller and now chooses a random different activity at each game-hour boundary: typing, petting the cat or looking out the window. Walking only connects destinations, and a new hour can interrupt travel. The existing clock remains one game hour per real minute; there is no separate activity timer. Sleeping remains deferred.
 
-The character is now a single articulated voxel model with one body scale, a chunky brown hair volume, dark hoodie and white shoes. Its joints create standing, seated typing and crouched cat poses. Walking alternates planted feet and lifts the other foot; the character turns smoothly toward its route. The chair and cat remain separate stationary artwork. Pose changes still switch posture immediately; furniture-aware collision and full room depth remain future work.
+The character now uses a reference-guided transparent artwork atlas: detailed tousled brown hair, charcoal hoodie, dark pants and white sneakers. The same artwork supplies front/back standing, seated and crouched poses. Walking animates the two leg regions of the standing artwork so the face, hair and outfit remain consistent. This is 2D animation with a voxel appearance, not rigged 3D geometry. The chair and cat remain separate stationary artwork.
 
-The approved smaller voxel concept guides the model, with the requested 25% increase from the half-size concept. A fixed 128×160 drawing surface and shared model coordinates prevent walking from changing body size. Runtime geometry is simpler than the detailed concept illustration. The bedroom remains an illustration; the character has real 3D cuboid geometry projected into the scene, without converting the entire room to 3D.
+A shared 256×320 canvas, fixed pixel-to-room scale and common foot anchor prevent a walking-specific size jump. Standing height is approximately 82 pixels at the tested 390-pixel portrait viewport. The requested 25% increase from the smaller concept remains the scale target. Pose transitions switch immediately; leg deformation, hand motion, furniture contact, collision and depth still need refinement.
 
 ## Remaining implementation sequence
 
@@ -24,6 +24,6 @@ An intentional furniture interaction temporarily takes priority over an ordinary
 
 ## Artwork and performance
 
-The renderer combines a layered 2D bedroom illustration with a software-rendered 3D voxel character. The long-term 3D goal remains open: evaluate a rigged model (one character with movable joints) in a separate visual preview before replacing the illustrated room. Compare consistency and phone performance before committing to that renderer.
+The renderer combines a layered 2D bedroom illustration with detailed transparent character artwork (385 KB WebP). The long-term 3D goal remains open: evaluate a rigged model (one character with movable joints) in a separate visual preview before replacing the illustrated room. Compare consistency and phone performance before committing to that renderer.
 
 Use one active character pose, reuse common room assets, pause motion offscreen, respect reduced motion and avoid rebuilding furniture or recalculating paths every frame. Validate both phone orientations and a physical iPhone before claiming device performance.

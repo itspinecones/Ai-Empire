@@ -1,6 +1,6 @@
 # AI Empire — development baseline
 
-Mobile-first idle tycoon. This development branch now integrates the approved illustrated bedroom style with working controls. At each game-hour boundary the character randomly chooses a different activity: typing, petting the cat or looking out the window. Walking connects destinations. The existing speed remains one game hour per real minute. Routine destination and travel progress survive reload; no separate activity countdown is shown. Sleeping waits for the future day/night system. The character is now one articulated voxel model, drawn into a small pixel canvas over the illustrated bedroom. Future interactions are described in ROOM-LIFE.md.
+Mobile-first idle tycoon. This development branch now integrates the approved illustrated bedroom style with working controls. At each game-hour boundary the character randomly chooses a different activity: typing, petting the cat or looking out the window. Walking connects destinations. The existing speed remains one game hour per real minute. Routine destination and travel progress survive reload; no separate activity countdown is shown. Sleeping waits for the future day/night system. The character uses detailed voxel-style artwork on a small canvas over the illustrated bedroom. One shared scale preserves its proportions during travel and activities. Future interactions are described in ROOM-LIFE.md.
 
 ## Environment boundaries
 

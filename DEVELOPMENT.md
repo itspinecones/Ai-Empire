@@ -1,3 +1,19 @@
+# Reference character correction — October 28, 2026
+
+The owner rejected the simple cuboid model because it did not resemble the approved detailed voxel character. Replaced it with reference-guided artwork preserving the tousled brown hair, tiny face, charcoal hoodie, short dark pants, white sneakers and warm rim lighting. Removed the procedural model and its geometry-specific tests.
+
+The transparent 1448×1086 atlas is 385,088 bytes in WebP. Standing front/back, seated and crouched poses share one source-to-room scale on a 256×320 canvas. Walking deforms two leg regions from the same standing art instead of cycling inconsistent character illustrations. Its legs alternate by travel distance; the upper-body appearance and size remain stable. This is illustrated 2D animation with a voxel look. It does not provide true 3D rotation, articulated knees, independent hand strokes or smooth seated-to-standing transitions. Those remain visual refinement work, along with precise chair/keyboard contact.
+
+Room activity still follows the existing clock: one game hour per real minute, random different activity at each hour, travel only between activities, no separate activity countdown and no sleep yet. Job/economy code and save keys are unchanged. Artwork load failures display a visible message while business controls continue working. Drawing remains capped at 30 frames/s during travel and 12 frames/s for breathing, pauses in hidden tabs and respects reduced motion.
+
+Validation: 21 automated tests pass, including directional artwork selection, shared atlas bounds/scale, image-load failure, hourly routines and economy/job persistence. Syntax and structure checks pass. Actual browser inspection covered typing, cat, window and travel; 390×844 and 844×390 layouts show no horizontal overflow. Character canvas widths are 85.80 and 85.81 pixels respectively. No game console errors were observed (browser-extension metadata errors only). Physical iPhone and battery performance remain unmeasured. The build now cleans generated output to remove stale renderer files.
+
+Private development preview only. Public main and GitHub Pages remain unchanged.
+
+---
+
+## Earlier checkpoints (superseded where noted)
+
 # Articulated voxel character — October 28, 2026
 
 Approved direction: the 3D pixel/voxel style and a character 25% larger than the half-size concept. Implemented a single cuboid model with a shared canvas and body scale for all activities. Separate illustrated pose images no longer load. Hair uses a rounded volume of small shaded cubes; hoodie, skin and shoes use block geometry. The model is intentionally simpler than the detailed concept image.

@@ -1,7 +1,7 @@
 import {ROOM_SAVE_KEY,readRoomRoutine,syncRoomHour,advanceTravel,roomFrame,project} from './routine.js';
-import {createVoxelCharacter} from './voxel-character.js';
+import {createReferenceCharacter} from './reference-character.js';
 export function startRoomLife(getMinutes) {
- const stage=document.querySelector('.room-stage'),canvas=document.getElementById('voxelActor');
+ const stage=document.querySelector('.room-stage'),canvas=document.getElementById('characterActor');
  const portrait=matchMedia('(orientation: portrait)'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
  let raw=null;try{raw=localStorage.getItem(ROOM_SAVE_KEY);}catch{}
  const s=readRoomRoutine(raw,getMinutes());
@@ -27,11 +27,12 @@ export function startRoomLife(getMinutes) {
    const wasTraveling=s.route.length>0;advanceTravel(s,Math.min(dt,.25),reduced.matches);if(!reduced.matches)time+=dt;if(!reduced.matches||changed||wasTraveling)render(dt);if(now-saved>=5000)save();
   }raf=requestAnimationFrame(tick);
  }
- function resume(){last=performance.now();if(!document.hidden&&raf===null)raf=requestAnimationFrame(tick);}
- try{model=createVoxelCharacter(canvas);syncRoomHour(s,getMinutes());render();resume();}
- catch{const e=document.getElementById('sceneError');e.textContent='The character could not render. Reload to retry; jobs still work.';e.hidden=false;return;}
+ function resume(){last=performance.now();if(model&&!document.hidden&&raf===null)raf=requestAnimationFrame(tick);}
+ createReferenceCharacter(canvas).then(character=>{
+  model=character;syncRoomHour(s,getMinutes());render();resume();
+ }).catch(()=>{const e=document.getElementById('sceneError');e.textContent='The character artwork could not load. Reload to retry; jobs still work.';e.hidden=false;});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf!==null)cancelAnimationFrame(raf);raf=null;save();}else resume();});
  window.addEventListener('pagehide',save);
- portrait.addEventListener('change',()=>render());
- reduced.addEventListener('change',()=>render());
+ portrait.addEventListener('change',()=>{if(model)render();});
+ reduced.addEventListener('change',()=>{if(model)render();});
 }
