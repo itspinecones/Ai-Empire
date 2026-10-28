@@ -86,8 +86,9 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('pagehide', () => { advance(state); persist(); });
 
-// Scene problems must not prevent the economy or interface from starting.
-import('./room.js').then(({ startRoom }) => startRoom(el('world'))).catch(error => {
-  console.error('Bedroom renderer:', error);
-  el('sceneError').hidden = false;
-});
+// Artwork loading is independent of the economy.
+const art = el('world');
+art.addEventListener('error', () => { el('sceneError').hidden = false; });
+if (art.complete && !art.naturalWidth) el('sceneError').hidden = false;
+el('openUpgrades').addEventListener('click', () => el('upgrades').showModal());
+document.querySelector('[data-view="research"]').addEventListener('click', () => el('upgrades').showModal());

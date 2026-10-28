@@ -1,6 +1,6 @@
 # AI Empire — development baseline
 
-Mobile-first idle tycoon. This branch repairs the existing prototype; it is not the approved visual redesign.
+Mobile-first idle tycoon. This development branch now integrates the approved illustrated bedroom style with working controls. The room is static artwork; true 3D and character animation are still pending.
 
 ## Environment boundaries
 
@@ -28,7 +28,8 @@ Serve `dist/` using an HTTP static server. ES modules need HTTP rather than open
 - `src/styles.css`: responsive layout, including narrow screens and safe areas.
 - `src/game.js`: economy, save validation and elapsed-time calculations.
 - `src/app.js`: buttons, display updates and preview-only storage.
-- `src/room.js`: retained 2D bedroom drawing, now independent of gameplay startup.
+- `assets/`: approved-style portrait and landscape room artwork.
+- `src/room.js`: legacy 2D drawing, retained but not loaded.
 - `preview/index.html`: original experimental Three.js page, unchanged and not included in the baseline build.
 - `tests/`: economy and persistence regression checks.
 

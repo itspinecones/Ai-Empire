@@ -1,3 +1,13 @@
+# Approved artwork integration — October 28, 2026
+
+Current preview uses two generated static room illustrations with live HTML controls, portrait bottom navigation, landscape sidebar and a native upgrades dialog. It is NOT a true 3D scene; character movement and dynamic lighting remain unimplemented. The old canvas module is retained but no longer loaded.
+
+Assets: bedroom-wide.webp (202354 bytes), bedroom-tall.webp (173500 bytes). Generated with the built-in image tool from approved mockups; prompts removed all baked interface elements and preserved room composition, one monitor, character and lighting. WebP encoding quality 86. Only the matching orientation image is loaded initially.
+
+Validation: syntax/structure checks and nine economy tests passed. Browser checked 390x844 and 844x390: both art assets loaded, zero horizontal overflow. Clicking a job earned $5 and one research point; upgrades dialog opened and closed. Physical Safari testing remains outstanding. No changes to the public main branch or Pages settings.
+
+## Prior baseline checkpoint
+
 # Development checkpoint — October 28, 2026
 
 ## Completed baseline repair
