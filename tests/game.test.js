@@ -9,7 +9,7 @@ test('preview cannot overwrite the live storage key', () => {
 test('new game earns its first GPU upgrade without negative cash', () => {
   const s = initialState(1000);
   assert.equal(performAction(s, 'gpu'), false);
-  for (let i = 0; i < 5; i++) performAction(s, 'job');
+  for (let i = 0; i < 5; i++) { performAction(s, 'job'); advance(s, s.job.endsAt); }
   assert.equal(s.cash, 25); assert.equal(s.rp, 5);
   assert.equal(performAction(s, 'gpu'), true);
   assert.equal(s.gpu, 2); assert.equal(s.cash, 0);
@@ -64,4 +64,36 @@ test('a backward system clock does not generate income or double count elapsed t
   assert.equal(advance(s, 4000).earned, 0);
   assert.equal(s.last, 5000);
   assert.equal(advance(s, 6000).earned, 1);
+});
+
+test('a job starts without payment and rejects repeated starts', () => {
+  const s = initialState(1000);
+  assert.equal(performAction(s, 'job'), true);
+  assert.equal(s.cash, 0); assert.equal(s.rp, 0);
+  assert.equal(performAction(s, 'job'), false);
+  advance(s, 10999); assert.equal(s.cash, 0);
+  const result = advance(s, 11000);
+  assert.deepEqual(result.completed, {cash:5,rp:1});
+  assert.equal(s.cash, 5); assert.equal(s.job, null);
+  advance(s, 12000); assert.equal(s.cash, 5);
+});
+test('mid-job reload preserves remaining time and pays once', () => {
+  const s = initialState(1000); performAction(s, 'job');
+  const restored = readState(JSON.stringify(s), 6000);
+  advance(restored, 6000); assert.equal(restored.cash, 0);
+  assert.equal(restored.job.endsAt, 11000);
+  advance(restored, 21000); assert.equal(restored.cash, 5);
+  const again = readState(JSON.stringify(restored), 22000);
+  advance(again, 22000); assert.equal(again.cash, 5);
+});
+test('reward is snapshotted, not increased by buying upgrades mid-job', () => {
+  const s = initialState(1000); s.cash = 25; performAction(s, 'job');
+  performAction(s, 'gpu'); advance(s, 11000);
+  assert.equal(s.cash, 5); assert.equal(s.rp, 1);
+  performAction(s, 'job'); advance(s, 21000);
+  assert.equal(s.cash, 15); assert.equal(s.rp, 3);
+});
+test('old saves migrate with no job and invalid job data is discarded', () => {
+  assert.equal(readState('{"cash":25}',1000).job,null);
+  assert.equal(readState('{"job":{"startedAt":0,"endsAt":-1,"cash":999,"rp":1}}',1000).job,null);
 });

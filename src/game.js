@@ -1,10 +1,11 @@
 // Pure game rules: no browser or rendering dependencies.
 export const SAVE_KEY = 'ai-empire-development-v1';
+export const JOB_DURATION_MS = 10000;
 export const OFFLINE_CAP_SECONDS = 8 * 60 * 60;
 export const MODEL_NAMES = ['Basic Classifier', 'Text Assistant', 'Vision Model', 'Reasoning Engine', 'Frontier AI'];
 export const initialState = (now = Date.now()) => ({
   version: 1, cash: 0, gpu: 1, agents: 0, rp: 0, tier: 0,
-  gameMinutes: 360, last: now,
+  gameMinutes: 360, last: now, job: null,
 });
 
 const finite = (value, fallback, min = 0, max = Number.MAX_SAFE_INTEGER) =>
@@ -25,6 +26,11 @@ export function readState(raw, now = Date.now()) {
       tier: Math.floor(finite(value.tier, 0, 0, MODEL_NAMES.length - 1)),
       gameMinutes: finite(value.gameMinutes, 360),
       last: finite(value.last, now, 0, now),
+      job: value.job && Number.isFinite(value.job.startedAt) && Number.isFinite(value.job.endsAt)
+        && value.job.startedAt >= 0 && value.job.endsAt - value.job.startedAt === JOB_DURATION_MS
+        && Number.isFinite(value.job.cash) && value.job.cash > 0
+        && Number.isFinite(value.job.rp) && value.job.rp > 0
+        ? { startedAt: value.job.startedAt, endsAt: value.job.endsAt, cash: value.job.cash, rp: value.job.rp } : null,
     };
   } catch { return defaults; }
 }
@@ -42,13 +48,20 @@ export function advance(s, now = Date.now()) {
   s.cash = Math.min(Number.MAX_SAFE_INTEGER, s.cash + earned);
   s.gameMinutes += elapsed;
   s.last = Math.max(s.last, now);
-  return { elapsed, earned };
+  let completed = null;
+  if (s.job && now >= s.job.endsAt) {
+    completed = { cash: s.job.cash, rp: s.job.rp };
+    s.job = null;
+    s.cash = Math.min(Number.MAX_SAFE_INTEGER, s.cash + completed.cash);
+    s.rp = Math.min(Number.MAX_SAFE_INTEGER, s.rp + completed.rp);
+  }
+  return { elapsed, earned, completed };
 }
 
-export function performAction(s, action) {
+export function performAction(s, action, now = s.last) {
   if (action === 'job') {
-    s.cash = Math.min(Number.MAX_SAFE_INTEGER, s.cash + jobReward(s));
-    s.rp = Math.min(Number.MAX_SAFE_INTEGER, s.rp + s.gpu);
+    if (s.job) return false;
+    s.job = { startedAt: now, endsAt: now + JOB_DURATION_MS, cash: jobReward(s), rp: s.gpu };
     return true;
   }
   if (action === 'gpu' && s.gpu < 1000 && s.cash >= gpuCost(s)) {

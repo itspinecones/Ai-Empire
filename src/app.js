@@ -6,6 +6,12 @@ let storageAvailable = true, raw = null;
 try { raw = localStorage.getItem(SAVE_KEY); } catch { storageAvailable = false; }
 let state = readState(raw);
 const startup = advance(state);
+function announceCompletion(result) {
+  if (result.completed) {
+    el('toast').textContent = 'Job complete · +$' + fmt(result.completed.cash) + ' · +' + result.completed.rp + ' research';
+    persist();
+  }
+}
 let lastSaved = 0;
 
 function persist() {
@@ -26,8 +32,12 @@ function render() {
   el('model').textContent = 'Model: ' + MODEL_NAMES[state.tier];
   el('agents').textContent = state.agents + ' agents';
   el('dayTime').textContent = clockText(state);
-  el('job').textContent = 'Complete AI Job · +$' + fmt(jobReward(state));
-  el('job').disabled = false;
+  const remaining = state.job ? Math.max(0, state.job.endsAt - Date.now()) : 0;
+  el('job').textContent = state.job ? 'Working… ' + (remaining / 1000).toFixed(1) + 's' : 'Start AI Job · +$' + fmt(jobReward(state));
+  el('job').disabled = Boolean(state.job);
+  el('jobProgress').value = state.job ? Math.min(10, Math.max(0, 10 - remaining / 1000)) : 0;
+  el('jobStatus').textContent = state.job ? 'Training · reward $' + fmt(state.job.cash) + ' + ' + state.job.rp + ' research' : 'Ready · 10-second job';
+  document.documentElement.classList.toggle('working', Boolean(state.job));
   el('buyGpu').textContent = 'Upgrade GPU · $' + fmt(gpuCost(state));
   el('buyGpu').disabled = state.cash < gpuCost(state) || state.gpu >= 1000;
   el('buyAgent').textContent = 'Hire AI Agent · $' + fmt(agentCost(state));
@@ -41,7 +51,7 @@ for (const [id, action] of [['job', 'job'], ['buyGpu', 'gpu'], ['buyAgent', 'age
   el(id).addEventListener('click', () => {
     advance(state);
     if (performAction(state, action)) {
-      el('toast').textContent = action === 'job' ? '' : action === 'gpu'
+      el('toast').textContent = action === 'job' ? 'Job started. Your developer is working.' : action === 'gpu'
         ? 'GPU upgraded. Jobs and agents now earn more.' : action === 'agent'
         ? 'AI agent hired. Passive income is running.' : 'Unlocked ' + MODEL_NAMES[state.tier] + '.';
     }
@@ -71,18 +81,19 @@ document.querySelectorAll('.nav button').forEach(button => {
 });
 
 if (startup.elapsed > 5 && startup.earned > 0) el('toast').textContent = 'Offline earnings: $' + fmt(startup.earned);
-persist(); render();
+persist(); render(); announceCompletion(startup);
 
 setInterval(() => {
   if (document.hidden) return;
-  advance(state); render();
+  const result = advance(state); render(); announceCompletion(result);
   if (Date.now() - lastSaved >= 5000) persist();
-}, 1000);
+}, 100);
 document.addEventListener('visibilitychange', () => {
   const result = advance(state);
+  document.documentElement.classList.toggle('paused', document.hidden);
   if (!document.hidden && result.earned > 0 && result.elapsed > 5)
     el('toast').textContent = 'Welcome back. Earned $' + fmt(result.earned) + ' while away.';
-  persist(); render();
+  persist(); render(); announceCompletion(result);
 });
 window.addEventListener('pagehide', () => { advance(state); persist(); });
 

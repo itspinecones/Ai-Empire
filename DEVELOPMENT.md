@@ -1,3 +1,15 @@
+# Workstation loop — October 28, 2026
+
+Current build: 10-second jobs, reward snapshot at start, one active job, saved timer, one-time completion payout. Existing preview saves migrate without losing balances. Progress and working animation continue correctly after reload; one started job can complete while away, but no unstarted jobs auto-run.
+
+Art: separate generated room and transparent seated person/chair layers in both orientations. Full-canvas sprites are positioned/scaled in a shared aspect-ratio stage. Idle breathing and small working sway are CSS animations; monitor glow varies while working. This is layered illustration, not skeletal 3D or independent finger animation. Blinking is deferred because the face is mostly turned away. Reduced-motion settings disable movement; hidden pages pause animation. Original flat assets retained for rollback.
+
+Checks: 13 engine tests, syntax/HTML checks, browser job start and reload persistence. Old saves, repeated start rejection, one-time payout and mid-job upgrade reward stability covered. Physical iPhone validation still requires user testing. One active preview tab is recommended; simultaneous tabs are not coordinated.
+
+Production main and Pages unchanged. Private preview only.
+
+## Previous checkpoints
+
 # Approved artwork integration — October 28, 2026
 
 Current preview uses two generated static room illustrations with live HTML controls, portrait bottom navigation, landscape sidebar and a native upgrades dialog. It is NOT a true 3D scene; character movement and dynamic lighting remain unimplemented. The old canvas module is retained but no longer loaded.
