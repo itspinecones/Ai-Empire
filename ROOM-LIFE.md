@@ -4,9 +4,9 @@ The bedroom is a living space that continues its own routine while the player bu
 
 ## Current checkpoint
 
-The activity storyboard was approved. Typing, walking and cat time now each occupy a 60-second slot, independently of jobs; the last five seconds of cat time return the character to the desk. Sleeping is explicitly postponed until the clock/day-night system is developed.
+The character is smaller and now chooses a random different activity at each game-hour boundary: typing, petting the cat or looking out the window. Walking only connects destinations, and a new hour can interrupt travel. The existing clock remains one game hour per real minute; there is no separate activity timer. Sleeping remains deferred.
 
-The room uses walking and petting sprite atlases, a stationary empty chair and a separate cat pose. The approved seated person/chair layer remains for typing. The controller follows safe authored routes for portrait and landscape, saves its own elapsed time, pauses in hidden tabs and respects reduced motion. This is layered illustration with approximate frame animation; sitting/crouching switches poses. Future polish should improve stride quality and transitions before calling it finished character animation.
+The room uses a four-frame directional walking atlas, petting atlas, window pose, stationary chair and separate cat. The routine saves destination and current floor position, pauses movement when hidden and catches up to the game clock on return. Reduced motion skips travel. New artwork improves passing poses but still repeats similar leading-leg silhouettes; convincing alternating-foot animation remains unfinished. Sitting/crouching are pose switches, and the seated artwork still includes the chair.
 
 ## Remaining implementation sequence
 

@@ -17,7 +17,7 @@
 .empty-chair{left:62%;top:58.6%;width:15.2%;height:auto;z-index:1}
 .room-cat{left:66.1%;top:70%;width:8.4%;height:auto;z-index:3;transform:translate(-50%,-90%)}
 .walking-actor{width:18%;aspect-ratio:3/4;z-index:4;transform:translate(-50%,-97.07%)}
-.walk-sprite{width:100%;height:100%;background:url('../assets/walk-atlas.webp') 0 0/400% 200% no-repeat}
+.walk-sprite{width:100%;height:100%;background:url('../assets/walk-hourly.webp') 0 0/400% 200% no-repeat}
 .petting-actor{left:62.8%;top:70%;width:18%;aspect-ratio:1;z-index:4;background:url('../assets/pet-atlas.webp') 0 0/200% 200% no-repeat;transform:translate(-50%,-94%)}
 .person{z-index:2}.monitor-glow{z-index:1}
 .routine-ready .room-cat{display:block}
@@ -26,3 +26,14 @@
 [data-pose="petting"] .room-cat{display:none}
 .status .room-status{color:#d5bb97;font-size:10px;margin-top:5px}
 @media(orientation:portrait){.empty-chair{left:61.5%;top:52.7%;width:22%}.walking-actor{width:27%}.petting-actor{left:62.2%;top:62%;width:27%}.room-cat{left:67.2%;top:62%;width:12.6%}}
+
+/* Smaller actors; movement is only travel between hourly destinations. */
+.person{scale:.75;transform-origin:62% 87%}
+.walking-actor{width:20%;aspect-ratio:1;transform:translate(-50%,-95%)}
+.empty-chair{width:11.4%}
+.petting-actor{width:13.5%;left:62.1%}
+.room-cat{width:6.3%;left:64.6%}
+.window-actor{display:none;position:absolute;width:20%;transform:translate(-50%,-95%);z-index:2}
+[data-pose="window"] .window-actor,[data-pose="window"] .empty-chair{display:block}
+[data-pose="window"] .person{display:none}
+@media(orientation:portrait){.walking-actor{width:30%}.empty-chair{width:16.5%}.petting-actor{width:20.25%;left:60.5%}.room-cat{width:9.45%;left:64.2%}.window-actor{width:30%}}

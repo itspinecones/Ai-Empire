@@ -1,6 +1,6 @@
 # AI Empire — development baseline
 
-Mobile-first idle tycoon. This development branch now integrates the approved illustrated bedroom style with working controls. The room rotates between typing, walking and petting the cat every 60 seconds, independently of AI jobs. Routine progress survives reload. Sleeping waits for the future day/night system. These are illustrated sprite animations, not true 3D. Future interactions are described in ROOM-LIFE.md.
+Mobile-first idle tycoon. This development branch now integrates the approved illustrated bedroom style with working controls. At each game-hour boundary the character randomly chooses a different activity: typing, petting the cat or looking out the window. Walking connects destinations. The existing speed remains one game hour per real minute. Routine destination and travel progress survive reload; no separate activity countdown is shown. Sleeping waits for the future day/night system. These are illustrated sprite animations, not true 3D. Future interactions are described in ROOM-LIFE.md.
 
 ## Environment boundaries
 

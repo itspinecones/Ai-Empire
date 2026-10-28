@@ -106,4 +106,4 @@ if (art.complete && !art.naturalWidth) el('sceneError').hidden = false;
 el('openUpgrades').addEventListener('click', () => el('upgrades').showModal());
 document.querySelector('[data-view="research"]').addEventListener('click', () => el('upgrades').showModal());
 
-startRoomLife();
+startRoomLife(() => state.gameMinutes);

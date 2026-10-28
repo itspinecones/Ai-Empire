@@ -1,3 +1,17 @@
+# Hourly room routine — October 28, 2026
+
+The existing clock controls the routine: one game hour per real minute. At each hour boundary choose uniformly from the other two activities (typing, cat, window). Walking connects destinations and can be interrupted by the next boundary. No separate activity countdown. Sleep remains deferred. Business rules and job timers are unchanged.
+
+Character artwork is reduced, with a new window pose and four-frame directional walk atlas. Travel uses continuous floor coordinates and distance-based frames; reduced motion skips travel. Save key ai-empire-room-hourly-v2 retains route and position across reloads. Old cosmetic routine saves reset safely; economy saves remain intact. Hidden travel pauses, then the controller uses the current game hour on return. Missed hours choose one current destination rather than replaying every missed activity.
+
+Limitations: the walk includes passing poses but the leading-leg silhouettes still repeat, so natural alternating-foot gait needs further artwork work. Seated character/chair remain combined; posture transitions switch images. This is illustrated animation, not true 3D. Physical iPhone performance remains unmeasured.
+
+Validation: 18 tests pass, including exact hour boundaries, excluding immediate activity repetition, all destinations, interruption mid-travel, reload recovery, missed hours, reduced motion and existing economy/job rules. Structure and syntax checks pass. Local browser verified the window activity on a 390×844 frame with no horizontal overflow and an hourly transition from typing into travel. Public main remains 5d43eb709876d5a5a21ea4dc59598c060330f1e2. Development branch/private preview only.
+
+---
+
+## Historical checkpoints (superseded by hourly routine above)
+
 # One-minute room activities — October 28, 2026
 
 Approved scope: typing → walking → cat time, 60 seconds each, repeating independently of AI jobs. Sleeping is excluded until the clock/day-night system is developed. The existing display clock remains unchanged; it does not control these real-time activity slots.

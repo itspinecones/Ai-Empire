@@ -1,89 +1,31 @@
-import { ROOM_SAVE_KEY, readRoomRoutine, advanceRoomRoutine, roomFrame } from './routine.js';
-
-export function startRoomLife() {
-  const stage = document.querySelector('.room-stage');
-  const actor = document.getElementById('walkingActor');
-  const walkSprite = actor.querySelector('.walk-sprite');
-  const petSprite = document.getElementById('pettingActor');
-  const status = document.getElementById('roomStatus');
-  const portrait = matchMedia('(orientation: portrait)');
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  let raw = null;
-  try { raw = localStorage.getItem(ROOM_SAVE_KEY); } catch { /* Cosmetic only. */ }
-  const routine = readRoomRoutine(raw);
-  let lastTick = performance.now(), lastSaved = lastTick, raf = null, ready = false;
-  let lastPose = '', lastActivity = '';
-
-  function save() {
-    try { localStorage.setItem(ROOM_SAVE_KEY, JSON.stringify({ elapsed: routine.elapsed })); } catch { /* Economy reports unavailable storage. */ }
-    lastSaved = performance.now();
-  }
-  function render() {
-    const frame = roomFrame(routine, portrait.matches ? 'tall' : 'wide', reducedMotion.matches);
-    if (lastActivity !== frame.activity) {
-      document.documentElement.dataset.roomActivity = frame.activity;
-      lastActivity = frame.activity;
-      save();
-    }
-    if (lastPose !== frame.pose) {
-      stage.dataset.pose = frame.pose;
-      lastPose = frame.pose;
-    }
-    if (frame.pose === 'walking') {
-      actor.style.left = frame.x + '%';
-      actor.style.top = frame.y + '%';
-      // Atlas frames share a floor-contact baseline despite small drawing offsets.
-      const soles = [[497,492,497,491],[466,464,465,467]][frame.row][frame.frame];
-      const rowPosition = frame.row * 100 - (497 - soles) / 512 * 100;
-      walkSprite.style.backgroundPosition = `${frame.frame * 100 / 3}% ${rowPosition}%`;
-      walkSprite.style.transform = `scaleX(${frame.facing})`;
-    } else if (frame.pose === 'petting') {
-      petSprite.style.backgroundPosition = `${frame.frame % 2 * 100}% ${Math.floor(frame.frame / 2) * 95.694}%`;
-    }
-    const name = { typing: 'Typing', walking: 'Walking', cat: 'Cat time' }[frame.activity];
-    const label = `${name} · ${frame.remaining}s`;
-    if (status.textContent !== label) status.textContent = label;
-  }
-  function tick(now) {
-    raf = null;
-    if (document.hidden || !ready) return;
-    if (now - lastTick >= 1000 / 30) {
-      advanceRoomRoutine(routine, now - lastTick);
-      lastTick = now;
-      render();
-      if (now - lastSaved >= 5000) save();
-    }
-    raf = requestAnimationFrame(tick);
-  }
-  function resume() {
-    lastTick = performance.now();
-    if (ready && !document.hidden && raf === null) raf = requestAnimationFrame(tick);
-  }
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      if (ready) advanceRoomRoutine(routine, performance.now() - lastTick);
-      if (raf !== null) cancelAnimationFrame(raf);
-      raf = null;
-      save();
-    } else resume();
-  });
-  window.addEventListener('pagehide', save);
-  portrait.addEventListener('change', () => { if (ready) render(); });
-  reducedMotion.addEventListener('change', () => { if (ready) render(); });
-
-  // Preload every pose before allowing the character to leave the desk.
-  Promise.all(['walk-atlas.webp','pet-atlas.webp','cat.webp','chair.webp'].map(name => {
-    const image = new Image();
-    image.src = new URL('../assets/' + name, import.meta.url).href;
-    return image.decode();
-  })).then(() => {
-    ready = true;
-    stage.classList.add('routine-ready');
-    render(); resume();
-  }).catch(() => {
-    status.textContent = 'Room animation unavailable';
-    const error = document.getElementById('sceneError');
-    error.textContent = 'A room animation could not load. Reload to try again; jobs still work.';
-    error.hidden = false;
-  });
+import {ROOM_SAVE_KEY,readRoomRoutine,syncRoomHour,advanceTravel,roomFrame} from './routine.js';
+export function startRoomLife(getMinutes) {
+ const stage=document.querySelector('.room-stage'), actor=document.getElementById('walkingActor'), walk=actor.querySelector('.walk-sprite'),pet=document.getElementById('pettingActor'),windowActor=document.getElementById('windowActor');
+ const portrait=matchMedia('(orientation: portrait)'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
+ let raw=null;try{raw=localStorage.getItem(ROOM_SAVE_KEY);}catch{}
+ const s=readRoomRoutine(raw,getMinutes());
+ let last=performance.now(),saved=last,raf=null,ready=false,petTime=0;
+ function save(){try{localStorage.setItem(ROOM_SAVE_KEY,JSON.stringify(s));}catch{}saved=performance.now();}
+ function render(){
+  const f=roomFrame(s,portrait.matches,reduced.matches);
+  stage.dataset.pose=f.pose;document.documentElement.dataset.roomActivity=f.pose==='seated'?'typing':f.activity;
+  stage.setAttribute('aria-label',f.pose==='walking'?'Developer walking to '+f.activity:({typing:'Developer typing',cat:'Developer petting the cat',window:'Developer looking out the window'}[f.activity]));
+  if(f.pose==='walking'){
+   actor.style.left=f.x+'%';actor.style.top=f.y+'%';
+   walk.style.backgroundPosition=`${f.frame*100/3}% ${f.row*100}%`;
+   walk.style.transform=`scaleX(${f.facing})`;
+  }else if(f.pose==='window') {windowActor.style.left=f.x+'%';windowActor.style.top=f.y+'%';}
+  else if(f.pose==='petting') {const n=reduced.matches?0:Math.floor(petTime/.45)%4;pet.style.backgroundPosition=`${n%2*100}% ${Math.floor(n/2)*95.694}%`;}
+ }
+ function tick(now){raf=null;if(document.hidden||!ready)return;
+  if(now-last>=1000/60){const dt=(now-last)/1000;last=now;
+   if(syncRoomHour(s,getMinutes())){petTime=0;save();}
+   advanceTravel(s,Math.min(dt,.1),reduced.matches);petTime+=dt;render();if(now-saved>=5000)save();
+  }raf=requestAnimationFrame(tick);
+ }
+ function resume(){last=performance.now();if(ready&&!document.hidden&&raf===null)raf=requestAnimationFrame(tick);}
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf!==null)cancelAnimationFrame(raf);raf=null;save();}else resume();});
+ window.addEventListener('pagehide',save);
+ portrait.addEventListener('change',()=>{if(ready)render();});
+ Promise.all(['walk-hourly.webp','window.webp','pet-atlas.webp','cat.webp','chair.webp'].map(name=>{const image=new Image();image.src=new URL('../assets/'+name,import.meta.url).href;return image.decode();})).then(()=>{ready=true;stage.classList.add('routine-ready');syncRoomHour(s,getMinutes());render();resume();}).catch(()=>{const e=document.getElementById('sceneError');e.textContent='A room animation could not load. Reload to retry; jobs still work.';e.hidden=false;});
 }
